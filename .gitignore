@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+*.egg-info/
+
+# Cached activation tensors are large and regenerable -- don't commit them.
+results/activations/
+results/summary.json
+
+.DS_Store

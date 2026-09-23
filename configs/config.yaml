@@ -1,0 +1,26 @@
+model:
+  name: "Qwen/Qwen3-0.6B"     
+  dtype: "float16"            
+  device: "cuda"              
+  max_seq_len: 128            
+
+dataset:
+  hf_path: "Cadenza-Labs/liars-bench"
+  subset: "instructed-deception"   
+  split: "test"                    
+  max_examples_per_class: 1000      # set to None = use all if you have enough GPU memory
+  seed: 42
+
+probing:
+  pooling: "last_token"       # "last_token" or "mean"
+  layers: "all"                # "all" or a list like [4, 8, 12, 16, 20, 24]
+  test_size: 0.2
+  cv_folds: 5
+  C: 1.0                       # inverse regularization strength for LogisticRegression
+  max_iter: 2000
+  seed: 42
+
+output:
+  activations_dir: "results/activations"
+  metrics_path: "results/probe_metrics.csv"
+  figures_dir: "results/figures"
