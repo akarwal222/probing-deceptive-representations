@@ -2,7 +2,7 @@
 
 A small, self-contained study of whether a language model's *honest* and
 *instructed-to-lie* responses are linearly separable in its internal
-activations — and if so, which layers (and which attention heads within
+activations and if so, which layers (and which attention heads within
 them) carry that signal most strongly.
 
 > **Status:** code and methodology are complete; the results tables below
@@ -13,10 +13,10 @@ them) carry that signal most strongly.
 
 ## Motivation
 
-The *linear representation hypothesis* — the claim that many high-level
+The *linear representation hypothesis* the claim that many high-level
 concepts a language model uses are encoded as roughly linear directions in
 its activation space (Park et al., 2023; Mikolov et al., 2013 for the
-original word-vector intuition) — is one of the more testable claims in
+original word-vector intuition) is one of the more testable claims in
 current interpretability work. If it holds for a concept as behaviourally
 important as *"am I currently being honest or deceptive?"*, that has a
 direct AI safety payoff: a cheap linear probe, not an expensive behavioural
@@ -26,7 +26,7 @@ Prior work gives reason for cautious optimism. Azaria & Mitchell (2023)
 showed a model's belief in the truth of a *statement* is linearly decodable
 from its activations. Marks & Tegmark (2023) extended this to more general
 true/false geometry. But detecting whether a *model's own generated
-response* is a lie is a different and harder problem — the signal has to
+response* is a lie is a different and harder problem the signal has to
 show up in activations produced while the model is actively producing
 deceptive text, not just while it evaluates a static claim. Liars' Bench
 (Kretschmar, Laurito, Maiya & Marks, 2025) was built specifically to test
@@ -49,7 +49,7 @@ day:
 
 **Model.** `Qwen/Qwen3-0.6B`, loaded via 🤗 Transformers in fp16. Chosen
 for speed (full extraction + probing sweep runs in minutes on a free Colab
-T4) — `configs/config.yaml` is a one-line change to try a larger Qwen3
+T4) `configs/config.yaml` is a one-line change to try a larger Qwen3
 variant if you want to test whether the effect sharpens with scale.
 
 **Dataset.** [`Cadenza-Labs/liars-bench`](https://huggingface.co/datasets/Cadenza-Labs/liars-bench),
@@ -57,14 +57,14 @@ Instructed-Deception subset: the model is asked a true/false factual
 question and either told to answer honestly or told to lie; responses are
 labelled `lie` / `honest` accordingly. This is the cleanest of the seven
 Liars' Bench settings (matched prompts, unambiguous ground truth), which is
-exactly why it's the right place to start, not the right place to stop —
+exactly why it's the right place to start, not the right place to stop
 see [Limitations](#limitations).
 
 **Activation extraction.** For every response, we run a forward pass with
 `output_hidden_states=True` and pool each layer's token representations
 into a single vector two ways:
 - **last-token**: the representation at the final input token (the
-  standard choice for decoder-only models — by construction it has
+  standard choice for decoder-only models by construction it has
   attended to the whole input).
 - **mean**: mean-pooled over all non-padding tokens, as a robustness check.
 
@@ -85,16 +85,16 @@ whether the layer-level signal is concentrated or diffuse.
 
 ```
 src/            core library (model loading, data, extraction, probing, plotting)
-scripts/        CLI entrypoints — run these, don't import from notebooks directly
+scripts/        CLI entrypoints run these, don't import from notebooks directly
 configs/        single YAML controlling model/dataset/probe hyperparameters
 notebooks/      thin Colab wrapper around scripts/run_pipeline.py
-results/        metrics CSVs + figures (activations themselves are gitignored — regenerable, large)
+results/        metrics CSVs + figures, activations themselves are gitignored
 tests/          model-free, network-free sanity tests for the probing logic
 ```
 
 ## Reproducing (and filling in results)
 
-**On Colab (recommended — free T4 is enough):**
+**On Colab (recommended free T4 is enough):**
 1. Open `notebooks/colab_demo.ipynb` in Colab (Runtime → T4 GPU).
 2. Run all cells. Total runtime is dominated by model download + activation
    extraction, typically under 10 minutes for ~2,000 examples.
@@ -106,17 +106,17 @@ python scripts/run_pipeline.py --config configs/config.yaml
 ```
 
 This produces:
-- `results/probe_metrics.csv` — accuracy/AUROC per layer, per pooling
-- `results/probe_metrics_heads.csv` — accuracy/AUROC per head, top layers only
+- `results/probe_metrics.csv` - accuracy/AUROC per layer, per pooling
+- `results/probe_metrics_heads.csv` - accuracy/AUROC per head, top layers only
 - `results/figures/accuracy_by_layer.png`
 - `results/figures/head_heatmap.png`
-- `results/summary.json` — best layer/head at a glance
+- `results/summary.json` - best layer/head at a glance
 
 **First-run note:** `src/data.py` was written without live access to the
 dataset, so the exact HF column names for text/label are best-effort
 guesses (see the module docstring). If the first run raises a
 `ValueError` naming the actual columns, add the right names to the
-candidate lists at the top of that file — a 30-second fix.
+candidate lists at the top of that file, a 30-second fix.
 
 ## Results
 
