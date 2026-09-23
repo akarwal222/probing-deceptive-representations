@@ -5,12 +5,6 @@ A small, self-contained study of whether a language model's *honest* and
 activations and if so, which layers (and which attention heads within
 them) carry that signal most strongly.
 
-> **Status:** code and methodology are complete; the results tables below
-> are templates. Run `python scripts/run_pipeline.py` (5–10 minutes on a
-> free Colab T4) and paste the output into the marked sections before
-> treating any number in this README as a finding. See
-> [Reproducing](#reproducing-and-filling-in-results) below.
-
 ## Motivation
 
 The *linear representation hypothesis* the claim that many high-level
